@@ -2,9 +2,11 @@ syntax = "proto3";
 
 package geoservice;
 
+option go_package = "geoservice.v1;geoservicev1";
+
 service Geoprovider {
     rpc AddressSearch (AddressRequest) returns (Response);
-    rpc Geocode (GeocodeRequest) return (Response);
+    rpc Geocode (GeocodeRequest) returns (Response);
 }
 
 message AddressRequest {
