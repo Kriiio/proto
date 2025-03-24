@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package cryptoservice;
+
+option go_package = "cryptoservice.v1;cryptoservicev1";
+
+service Cryptoprovider {
+    rpc GetRates (Request) returns (Response);
+}
+
+message Request {
+    
+}
+
+message Ask {
+    double price = 1;
+    double volume = 2;
+    int64 timestamp = 3;
+}
+
+message Bid {
+    double price = 1;
+    double volume = 2;
+    int64 timestamp = 3;
+}
+
+message Response {
+    int64 timestamp = 1;
+    repeated Ask asks = 2;
+    repeated Bid bids = 3;
+}
