@@ -1,15 +1,18 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package cryptoservice;
 
 option go_package = "cryptoservice.v1;cryptoservicev1";
 
 service Cryptoprovider {
-    rpc GetRates (Request) returns (Response);
+    rpc GetRates (google.protobuf.Empty) returns (Response);
+    rpc Ping (google.protobuf.Empty) returns (ResponsePong);
 }
 
-message Request {
-    
+message ResponsePong {
+    string pong = 1;
 }
 
 message Ask {

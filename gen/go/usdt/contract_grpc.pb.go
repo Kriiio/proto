@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -20,13 +21,15 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Cryptoprovider_GetRates_FullMethodName = "/cryptoservice.Cryptoprovider/GetRates"
+	Cryptoprovider_Ping_FullMethodName     = "/cryptoservice.Cryptoprovider/Ping"
 )
 
 // CryptoproviderClient is the client API for Cryptoprovider service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CryptoproviderClient interface {
-	GetRates(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error)
+	GetRates(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error)
+	Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResponsePong, error)
 }
 
 type cryptoproviderClient struct {
@@ -37,10 +40,20 @@ func NewCryptoproviderClient(cc grpc.ClientConnInterface) CryptoproviderClient {
 	return &cryptoproviderClient{cc}
 }
 
-func (c *cryptoproviderClient) GetRates(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Response, error) {
+func (c *cryptoproviderClient) GetRates(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Response, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Response)
 	err := c.cc.Invoke(ctx, Cryptoprovider_GetRates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoproviderClient) Ping(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ResponsePong, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ResponsePong)
+	err := c.cc.Invoke(ctx, Cryptoprovider_Ping_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +64,8 @@ func (c *cryptoproviderClient) GetRates(ctx context.Context, in *Request, opts .
 // All implementations must embed UnimplementedCryptoproviderServer
 // for forward compatibility.
 type CryptoproviderServer interface {
-	GetRates(context.Context, *Request) (*Response, error)
+	GetRates(context.Context, *emptypb.Empty) (*Response, error)
+	Ping(context.Context, *emptypb.Empty) (*ResponsePong, error)
 	mustEmbedUnimplementedCryptoproviderServer()
 }
 
@@ -62,8 +76,11 @@ type CryptoproviderServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCryptoproviderServer struct{}
 
-func (UnimplementedCryptoproviderServer) GetRates(context.Context, *Request) (*Response, error) {
+func (UnimplementedCryptoproviderServer) GetRates(context.Context, *emptypb.Empty) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRates not implemented")
+}
+func (UnimplementedCryptoproviderServer) Ping(context.Context, *emptypb.Empty) (*ResponsePong, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Ping not implemented")
 }
 func (UnimplementedCryptoproviderServer) mustEmbedUnimplementedCryptoproviderServer() {}
 func (UnimplementedCryptoproviderServer) testEmbeddedByValue()                        {}
@@ -87,7 +104,7 @@ func RegisterCryptoproviderServer(s grpc.ServiceRegistrar, srv CryptoproviderSer
 }
 
 func _Cryptoprovider_GetRates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Request)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -99,7 +116,25 @@ func _Cryptoprovider_GetRates_Handler(srv interface{}, ctx context.Context, dec 
 		FullMethod: Cryptoprovider_GetRates_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoproviderServer).GetRates(ctx, req.(*Request))
+		return srv.(CryptoproviderServer).GetRates(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Cryptoprovider_Ping_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoproviderServer).Ping(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Cryptoprovider_Ping_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoproviderServer).Ping(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -114,6 +149,10 @@ var Cryptoprovider_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRates",
 			Handler:    _Cryptoprovider_GetRates_Handler,
+		},
+		{
+			MethodName: "Ping",
+			Handler:    _Cryptoprovider_Ping_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
